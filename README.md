@@ -79,7 +79,7 @@ Used for conditional jumps and memory interfacing.
 | **AND** | `0101` | Bitwise AND |
 | **OR** | `0110` | Bitwise OR |
 | **XOR** | `0111` | Bitwise XOR |
-| **STR** | `1000` | Store to memory |
+| **STR** | `1000` | Store to register not from memory |
 | **HAL** | `1001` | Halt execution |
 
 ### Flags (2-bit)
