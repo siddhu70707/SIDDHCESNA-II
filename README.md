@@ -95,6 +95,7 @@ Conditional jumps trigger based on these states:
 
 Memory operations are defined by the bit pattern at the first place:
 * **Load (10):** Moves a value from RAM into the selected register.
-* **Store (11):** Saves a register value to RAM (*Planned for v3.0*).
+* **Store (11):** Saves a register value to RAM (*Planned for v3.0*) or it might be allocated somewher else
 
 > **Note:** SIDDHCESNA - II does not support negative numbers. Operations resulting in values less than zero will result in an underflow or be capped at zero depending on implementation.
+
