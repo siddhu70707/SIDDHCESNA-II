@@ -1,0 +1,7 @@
+LOAD r0, 0x0012 (10)
+LOAD r1, 0x0013 (5)
+LOAD rA, r0
+LOAD rB, r1
+ADD r3 (result of ra + rb)
+
+
