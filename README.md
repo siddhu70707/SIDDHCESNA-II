@@ -35,36 +35,15 @@ These IDs are used in the **SRC** and **DEST** fields of instructions to route d
 
 ### Type 00: Data Movement (MOVE)
 Copies data from a source component to a destination component.
-> **Format:** `[15-14: Type] [11-08: SRC] [07-04: DEST]`
-
-| Bit Range | Field | Description |
-| :--- | :--- | :--- |
-| **15 - 14** | `00` | Type: Data Movement |
-| **13 - 12** | `XX` | Unused |
-| **11 - 08** | `SRC` | 4-bit Source ID |
-| **07 - 04** | `DEST` | 4-bit Destination ID |
-| **03 - 00** | `XXXX` | Unused |
+> **Format:** `[15-14: Type] [13-12: XX] [11-08: SRC] [07-04: DEST] [03-00: XXXX]`
 
 ### Type 01: Arithmetic & Logic (ALU)
 Performs math on **RA** and **RB** and stores the result in a General Purpose Register.
-> **Format:** `[15-14: Type] [13-10: OPCODE] [09-06: DEST]`
-
-| Bit Range | Field | Description |
-| :--- | :--- | :--- |
-| **15 - 14** | `01` | Type: ALU Operation |
-| **13 - 10** | `OPCODE` | 4-bit Math Operation |
-| **09 - 06** | `DEST` | 4-bit Destination ID (R0-R3) |
-| **05 - 00** | `XXXXXX` | Unused |
+> **Format:** `[15-14: Type] [13-10: OPCODE] [09-06: DEST] [05-00: XXXXXX]`
 
 ### Type 10: Control Flow (JUMP)
 Updates the Program Counter (PC) based on flags.
 > **Format:** `[15-14: Type] [13-12: FLAG] [11-00: ADDR]`
-
-| Bit Range | Field | Description |
-| :--- | :--- | :--- |
-| **15 - 14** | `10` | Type: Branching |
-| **13 - 12** | `FLAG` | Condition: 00(Z), 01(C), 10(G), 11(Always) |
-| **11 - 00** | `ADDR` | 12-bit Target Jump Address |
 
 ---
 
@@ -76,23 +55,24 @@ Updates the Program Counter (PC) based on flags.
 | **ADD** | `0000` | $Result = RA + RB$ |
 | **SUB** | `0001` | $Result = RA - RB$ |
 | **MUL** | `0010` | $Result = RA \times RB$ |
-DIV
-NOT
-AND
-OR
-XOR
-PASS A
-PASS B
-HALT
+| **DIV** | `0011` | $Result = RA / RB$ |
+| **NOT** | `0100` | $Result = \neg RA$ |
+| **AND** | `0101` | $Result = RA \text{ AND } RB$ |
+| **OR** | `0110` | $Result = RA \text{ OR } RB$ |
+| **XOR** | `0111` | $Result = RA \oplus RB$ |
+| **PASS A** | `1000` | $Result = RA$ |
+| **PASS B** | `1001` | $Result = RB$ |
+| **HALT** | `1111` | Stops CPU Execution |
+
 ### Status Flags
 * **Z (Zero):** High if ALU result is 0.
-* **C (Carry):** High if operation exceeds 16-bit limit.
+* **C (Carry):** High if operation exceeds 16-bit unsigned limit.
 * **G (Greater):** High if $RA > RB$.
-* **S (Sign):** High if MSB of result is 1 (Note: Hardware is unsigned).
+* **S (Sign):** High if MSB of result is 1.
 
 ---
 
 ## 5. Implementation Notes
-1. **Fetch/Execute:** Each instruction requires a minimum of 2 clock cycles (T0: Fetch into IR, T1: Execute logic).
-2. **ALU Usage:** Before calling any Type 01 instruction, the programmer must use Type 00 instructions to load values into `RA` and `RB`.
-3. **RAM:** Since RAM is asynchronous, the data is available on the bus immediately when the address is set, but must be latched into a register on a clock edge.
+1. **Fetch/Execute:** The Control Unit uses a 2-step cycle. **T0** fetches the instruction into the IR. **T1** performs the internal move or math operation.
+2. **ALU Dependency:** ALU operations require data to be pre-loaded into `RA` and `RB` using Type 00 instructions.
+3. **RAM Interaction:** Since RAM is asynchronous, the Address Bus must be stable before the destination register latches the Data Bus on the next clock edge.
