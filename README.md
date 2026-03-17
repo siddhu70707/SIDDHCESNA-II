@@ -76,12 +76,14 @@ Updates the Program Counter (PC) based on flags.
 | **ADD** | `0000` | $Result = RA + RB$ |
 | **SUB** | `0001` | $Result = RA - RB$ |
 | **MUL** | `0010` | $Result = RA \times RB$ |
-| **AND** | `0101` | $Result = RA \text{ AND } RB$ |
-| **OR** | `0110` | $Result = RA \text{ OR } RB$ |
-| **XOR** | `0111` | $Result = RA \oplus RB$ |
-| **NOT** | `1000` | $Result = \neg RA$ |
-| **HALT** | `1111` | Halt CPU Clock |
-
+DIV
+NOT
+AND
+OR
+XOR
+PASS A
+PASS B
+HALT
 ### Status Flags
 * **Z (Zero):** High if ALU result is 0.
 * **C (Carry):** High if operation exceeds 16-bit limit.
