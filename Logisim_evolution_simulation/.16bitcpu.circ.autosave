@@ -3,6 +3,9 @@
   This file is intended to be loaded by Logisim-evolution v4.0.0(https://github.com/logisim-evolution/).
 
   <lib desc="#Wiring" name="0">
+    <tool name="Splitter">
+      <a name="facing" val="west"/>
+    </tool>
     <tool name="Pin">
       <a name="appearance" val="classic"/>
     </tool>
@@ -113,7 +116,6 @@
     <comp lib="0" loc="(1620,2280)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
-      <a name="radix" val="16"/>
       <a name="type" val="output"/>
       <a name="width" val="16"/>
     </comp>
@@ -184,12 +186,22 @@
       <a name="type" val="output"/>
       <a name="width" val="16"/>
     </comp>
+    <comp lib="0" loc="(2600,2810)" name="Splitter">
+      <a name="facing" val="west"/>
+      <a name="fanout" val="3"/>
+      <a name="incoming" val="3"/>
+    </comp>
     <comp lib="0" loc="(2660,1960)" name="Pull Resistor">
       <a name="facing" val="north"/>
     </comp>
     <comp lib="0" loc="(2690,2120)" name="Splitter">
       <a name="fanout" val="16"/>
       <a name="incoming" val="16"/>
+    </comp>
+    <comp lib="0" loc="(2770,2840)" name="Splitter">
+      <a name="facing" val="west"/>
+      <a name="fanout" val="4"/>
+      <a name="incoming" val="4"/>
     </comp>
     <comp lib="0" loc="(2830,1850)" name="Pin">
       <a name="appearance" val="NewPins"/>
@@ -298,7 +310,8 @@
       <a name="addrWidth" val="16"/>
       <a name="appearance" val="logisim_evolution"/>
       <a name="contents">addr/data: 16 16
-1 2 3 4 0 5 6
+0 2 3 4 0 5 6 200
+2
 </a>
       <a name="dataWidth" val="16"/>
       <a name="label" val="program_memory"/>
@@ -330,6 +343,12 @@
     </comp>
     <comp lib="8" loc="(2117,3410)" name="Text">
       <a name="text" val="TYPE"/>
+    </comp>
+    <comp lib="8" loc="(2563,2897)" name="Text">
+      <a name="text" val="opcode"/>
+    </comp>
+    <comp lib="8" loc="(2619,2835)" name="Text">
+      <a name="text" val="src"/>
     </comp>
     <comp lib="8" loc="(3395,985)" name="Text">
       <a name="text" val="RAM IS IN TYPE 00 means it have read/write with other"/>
@@ -399,7 +418,7 @@
     <wire from="(1550,3370)" to="(1690,3370)"/>
     <wire from="(1550,3400)" to="(1820,3400)"/>
     <wire from="(1560,2360)" to="(1710,2360)"/>
-    <wire from="(1560,3430)" to="(2080,3430)"/>
+    <wire from="(1580,3430)" to="(2080,3430)"/>
     <wire from="(1600,2190)" to="(1620,2190)"/>
     <wire from="(1620,2190)" to="(1620,2280)"/>
     <wire from="(1620,2280)" to="(1620,2670)"/>
@@ -626,6 +645,7 @@
     <wire from="(2390,2150)" to="(2570,2150)"/>
     <wire from="(2410,2270)" to="(2410,3020)"/>
     <wire from="(2410,2270)" to="(2730,2270)"/>
+    <wire from="(2410,3020)" to="(2790,3020)"/>
     <wire from="(2440,2340)" to="(2440,2550)"/>
     <wire from="(2440,2550)" to="(3510,2550)"/>
     <wire from="(2460,2890)" to="(2460,3240)"/>
@@ -643,6 +663,13 @@
     <wire from="(2520,2050)" to="(2520,2120)"/>
     <wire from="(2520,2050)" to="(2550,2050)"/>
     <wire from="(2520,2120)" to="(2690,2120)"/>
+    <wire from="(2520,2820)" to="(2580,2820)"/>
+    <wire from="(2520,2830)" to="(2580,2830)"/>
+    <wire from="(2520,2840)" to="(2580,2840)"/>
+    <wire from="(2520,2850)" to="(2750,2850)"/>
+    <wire from="(2520,2860)" to="(2750,2860)"/>
+    <wire from="(2520,2870)" to="(2750,2870)"/>
+    <wire from="(2520,2880)" to="(2750,2880)"/>
     <wire from="(2530,1820)" to="(2530,1950)"/>
     <wire from="(2530,1820)" to="(2710,1820)"/>
     <wire from="(2550,1830)" to="(2550,2050)"/>
@@ -653,6 +680,7 @@
     <wire from="(2590,1850)" to="(2710,1850)"/>
     <wire from="(2600,1860)" to="(2600,2240)"/>
     <wire from="(2600,1860)" to="(2710,1860)"/>
+    <wire from="(2600,2810)" to="(2910,2810)"/>
     <wire from="(2660,1870)" to="(2660,1910)"/>
     <wire from="(2660,1870)" to="(2670,1870)"/>
     <wire from="(2660,1910)" to="(2660,1920)"/>
@@ -701,10 +729,12 @@
     <wire from="(2760,2380)" to="(2930,2380)"/>
     <wire from="(2770,2080)" to="(2770,2350)"/>
     <wire from="(2770,2350)" to="(2930,2350)"/>
+    <wire from="(2770,2840)" to="(2790,2840)"/>
     <wire from="(2780,2070)" to="(2780,2330)"/>
     <wire from="(2780,2330)" to="(2930,2330)"/>
     <wire from="(2790,2060)" to="(2790,2290)"/>
     <wire from="(2790,2290)" to="(2930,2290)"/>
+    <wire from="(2790,2840)" to="(2790,3020)"/>
     <wire from="(2800,2050)" to="(2800,2270)"/>
     <wire from="(2800,2270)" to="(2930,2270)"/>
     <wire from="(2810,2040)" to="(2810,2230)"/>
@@ -864,7 +894,7 @@
     <wire from="(850,3080)" to="(1750,3080)"/>
     <wire from="(860,1990)" to="(1910,1990)"/>
     <wire from="(860,1990)" to="(860,3090)"/>
-    <wire from="(860,3090)" to="(1750,3090)"/>
+    <wire from="(860,3090)" to="(1730,3090)"/>
     <wire from="(950,1070)" to="(1480,1070)"/>
     <wire from="(950,1070)" to="(950,1220)"/>
     <wire from="(950,1220)" to="(1480,1220)"/>
