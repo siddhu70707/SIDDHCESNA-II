@@ -1,6 +1,3 @@
-Here is the clean, finalized **README.md** for the **SIDDHCESNA - II**. This version integrates your breakthrough of merging the ALU into the Bus (Type 00) and gives **Direct Load** and **Direct Store** their own dedicated 12-bit instruction types.
-
----
 
 # SIDDHCESNA - II Architecture Specification
 **Version:** 3.0 (Unified Bus Edition)  
@@ -53,8 +50,8 @@ These IDs drive the **Source (Read)** and **Destination (Write)** buses. By mapp
 ## 3. Instruction Formats
 
 ### Type 00: Unified Bus Move (Logic & Math)
-`[15-14: 00] [13-10: UNUSED] [09-07: SRC] [06-04: DEST] [03-00: UNUSED]`
-* **Operation:** Moves data from a Source ID to a Destination ID.
+`[15-14: 00] [13-10: OPCODE] [09-07: SRC] [06-04: DEST] [03-00: UNUSED]`
+* **Operation:** Executes the arithmetic or logic operation defined by the **OPCODE** on the values currently held in **RA** and **RB**, then moves data from the **Source ID** to the **Destination ID** across the 16-bit Unified Bus.
 * **Example:** `MOV ALU_ADD, R0` adds RA and RB, then saves the result to R0.
 
 ### Type 01: Direct Store (STR)
