@@ -1,98 +1,90 @@
+Here is the clean, finalized **README.md** for the **SIDDHCESNA - II**. This version integrates your breakthrough of merging the ALU into the Bus (Type 00) and gives **Direct Load** and **Direct Store** their own dedicated 12-bit instruction types.
+
+---
+
 # SIDDHCESNA - II Architecture Specification
-**Version:** 2.5  
+**Version:** 3.0 (Unified Bus Edition)  
 **Type:** 16-bit Multi-cycle ISA  
-**Status:** 90% Hardware Complete
+**Status:** 95% Hardware Complete
 
 ---
 
 ## 1. System Overview
 | Component | Specification |
-| :--- | :--- |
+| :---: | :--- |
 | **Word Size** | 16-bit |
 | **Address Space** | 12-bit (4,096 Words) |
 | **Register File** | 4 General Purpose (R0-R3) |
 | **ALU Feeders** | 2 Dedicated (RA, RB) |
-| **Data Memory** | RAM (12-bit Address) |
-| **Program Memory**| ROM (12-bit Address) |
+| **Data Memory** | RAM (12-bit Addr / 16-bit Data) |
+| **Program Memory** | ROM (12-bit Addr / 16-bit Inst) |
 
 ---
 
 ## 2. Component Mapping (3-bit IDs)
-These IDs drive the **Read Demux** (Sources) and **Write Demux** (Destinations) in the Datapath.
+These IDs drive the **Source (Read)** and **Destination (Write)** buses. By mapping ALU results as Sources, math operations are handled via standard moves.
 
-### Sources (Read Enable)
-| ID | Mnemonic | Component |
-| :--- | :--- | :--- |
-| `000` | **R0** | General Purpose Register 0 |
-| `001` | **R1** | General Purpose Register 1 |
-| `010` | **R2** | General Purpose Register 2 |
-| `011` | **R3** | General Purpose Register 3 |
-| `100` | **ALU_OUT**| Combinational ALU Result |
-| `101` | **MEMORY** | RAM Output (at current Address) |
-| `110` | **OutputReg**| Logisim Hex Display / Output Port |
-| `111` | **UNUSED** | Reserved |
+### Source IDs (Read From)
+| ID | Mnemonic | Component / Result |
+| :---: | :--- | :--- |
+| `000` | **R0** | Register 0 |
+| `001` | **R1** | Register 1 |
+| `010` | **R2** | Register 2 |
+| `011` | **R3** | Register 3 |
+| `100` | **ALU_ADD** | Result of $RA + RB$ |
+| `101` | **ALU_SUB** | Result of $RA - RB$ |
+| `110` | **ALU_PASS** | Pass $RA$ (Direct) |
+| `111` | **MEMORY** | RAM Output (Current Address) |
 
-### Destinations (Write Enable)
+### Destination IDs (Write To)
 | ID | Mnemonic | Component |
-| :--- | :--- | :--- |
-| `000` | **R0** | General Purpose Register 0 |
-| `001` | **R1** | General Purpose Register 1 |
-| `010` | **R2** | General Purpose Register 2 |
-| `011` | **R3** | General Purpose Register 3 |
+| :---: | :--- | :--- |
+| `000` | **R0** | Register 0 |
+| `001` | **R1** | Register 1 |
+| `010` | **R2** | Register 2 |
+| `011` | **R3** | Register 3 |
 | `100` | **RA** | ALU Operand Feeder A |
 | `101` | **RB** | ALU Operand Feeder B |
-| `110` | **CPU_OUT**| External Output (Display/Port) |
-| `111` | **MEMORY** | RAM Input (Store at Address) |
+| `110` | **CPU_OUT** | External Output (Display) |
+| `111` | **HALT** | Stop CPU Execution |
 
 ---
 
 ## 3. Instruction Formats
 
-### Type 00: Data Movement (MOVE)
+### Type 00: Unified Bus Move (Logic & Math)
 `[15-14: 00] [13-10: UNUSED] [09-07: SRC] [06-04: DEST] [03-00: UNUSED]`
-* Handles transfers between registers and memory.
+* **Operation:** Moves data from a Source ID to a Destination ID.
+* **Example:** `MOV ALU_ADD, R0` adds RA and RB, then saves the result to R0.
 
-### Type 01: Arithmetic & Logic (ALU)
-`[15-14: 01] [13-10: OPCODE] [09-07: DEST] [06-00: UNUSED]`
-* Processes values currently held in **RA** and **RB**.
+### Type 01: Direct Store (STR)
+`[15-14: 01] [13-12: REG_ID] [11-00: RAM_ADDR]`
+* **Operation:** `RAM[ADDR] = Reg[ID]`
+* **Action:** Stores a 16-bit register value into a specific 12-bit RAM address.
 
 ### Type 10: Control Flow (JUMP)
-`[15-14: 10] [13-12: FLAG_ID] [11-00: ADDR]`
-* Conditional jumps to the 12-bit Program ROM address.
+`[15-14: 10] [13-12: FLAG_ID] [11-00: ROM_ADDR]`
+* **Operation:** Jumps to a 12-bit ROM address if the condition is met.
 
-### Type 11: Immediate Load (LDI)
-`[15-14: 11] [13-12: REG_ID] [11-00: VALUE]`
-* Loads a 12-bit constant or address directly into a register.
+### Type 11: Direct Load (LDM)
+`[15-14: 11] [13-12: REG_ID] [11-00: RAM_ADDR]`
+* **Operation:** `Reg[ID] = RAM[ADDR]`
+* **Action:** Loads a 16-bit value from a 12-bit RAM address into a register.
 
 ---
 
-## 4. Opcodes & Flags
-
-### ALU Opcodes (Type 01)
-| Mnemonic | Code | Operation |
-| :--- | :--- | :--- |
-| **ADD** | `0000` | $RA + RB$ |
-| **SUB** | `0001` | $RA - RB$ |
-| **MUL** | `0010` | $RA \times RB$ |
-| **DIV** | `0011` | $RA / RB$ |
-| **AND** | `0100` | $RA \text{ AND } RB$ |
-| **OR** | `0101` | $RA \text{ OR } RB$ |
-| **XOR** | `0110` | $RA \oplus RB$ |
-| **NOT** | `0111` | $\text{NOT } RA$ |
-| **PASS A**| `1000` | $Dest = RA$ |
-| **PASS B**| `1001` | $Dest = RB$ |
-| **HALT** | `1111` | Stop CPU Execution |
-
-### Jump Flags (Type 10)
+## 4. Jump Flags (Type 10)
 | Flag ID | Mnemonic | Condition |
-| :--- | :--- | :--- |
+| :---: | :--- | :--- |
 | `00` | **JZ** | Jump if Zero ($RA = RB$) |
-| `01` | **JGREATERA**| Jump if $RA > RB$ |
-| `10` | **JSMALLERA**| Jump if $RA < RB$ |
+| `01` | **JGREATERA** | Jump if $RA > RB$ |
+| `10` | **JSMALLERA** | Jump if $RA < RB$ |
 | `11` | **JC** | Jump if Carry Flag is Set |
 
 ---
 
-### Logic Summary
-* **Address Handling:** Since addresses are 12 bits, use **Type 11** to load a memory address into a register. Use **Type 00** with `SRC 101` to pull data from that location into a destination register.
-* **Siddhuceros Method:** Optimized for iterative addition and comparison using the dedicated `JGREATERA` and `JSMALLERA` flags.
+## 5. Implementation Summary
+* **Efficiency:** Combined ALU and MOVE logic reduces instruction complexity.
+* **Memory:** Dedicated Load/Store types provide clean 12-bit addressing without needing pointers.
+* **Siddhuceros-II Goal:** Optimized for fast iterative addition and conditional branching.
+
