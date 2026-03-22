@@ -15,6 +15,7 @@
 | **ALU Feeders** | 2 Dedicated (RA, RB) |
 | **Data Memory** | RAM (12-bit Addr / 16-bit Data) |
 | **Program Memory** | ROM (12-bit Addr / 16-bit Inst) |
+| **Output Register** | 7 segment display for output|
 
 ---
 
@@ -28,10 +29,26 @@ These IDs drive the **Source (Read)** and **Destination (Write)** buses. By mapp
 | `001` | **R1** | Register 1 |
 | `010` | **R2** | Register 2 |
 | `011` | **R3** | Register 3 |
-| `100` | **ALU_ADD** | Result of $RA + RB$ |
-| `101` | **ALU_SUB** | Result of $RA - RB$ |
-| `110` | **ALU_PASS** | Pass $RA$ (Direct) |
-| `111` | **MEMORY** | RAM Output (Current Address) |
+| `100` | **ALU_OUT** | ALU result |
+
+### ALU Opcode Table (Bits 13-10)
+The **OPCODE** field defines the operation performed by the ALU on operands **RA** and **RB**.
+
+| Opcode | Mnemonic | Operation | Description |
+| :---: | :--- | :--- | :--- |
+| `0000` | **ADD** | $RA + RB$ | 16-bit Addition |
+| `0001` | **SUB** | $RA - RB$ | 16-bit Subtraction |
+| `0010` | **MUL** | $RA \times RB$ | 16-bit Multiplication |
+| `0011` | **DIV** | $RA \div RB$ | 16-bit Division |
+| `0100` | **NOT** | $\sim RA$ | Bitwise **NOT** (Operand A) |
+| `0101` | **AND** | $RA \text{ \& } RB$ | Bitwise **AND** |
+| `0110` | **OR** | $RA \mid RB$ | Bitwise **OR** |
+| `0111` | **XOR** | $RA \oplus RB$ | Bitwise **XOR** |
+| `1000` | **PASSA** | $RA$ | Pass **RA** to Bus (Bypass) |
+| `1001` | **PASSB** | $RB$ | Pass **RB** to Bus (Bypass) |
+| `1111` | **HALT** | **STOP** | Terminates CPU Execution |
+
+*Note: Opcodes 1010 through 1110 are reserved for future expansion (e.g., Logical Shifts or Floating Point).*
 
 ### Destination IDs (Write To)
 | ID | Mnemonic | Component |
