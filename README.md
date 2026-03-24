@@ -2,7 +2,7 @@
 # SIDDHCESNA - II Architecture Specification
 **Version:** 3.0 (Unified Bus Edition)  
 **Type:** 16-bit Multi-cycle ISA  
-**Status:** 95% Hardware Complete
+**Status:** 100% Hardware Complete
 
 ---
 
@@ -60,7 +60,6 @@ The **OPCODE** field defines the operation performed by the ALU on operands **RA
 | `100` | **RA** | ALU Operand Feeder A |
 | `101` | **RB** | ALU Operand Feeder B |
 | `110` | **CPU_OUT** | External Output (Display) |
-| `111` | **HALT** | Stop CPU Execution |
 
 ---
 
@@ -95,6 +94,8 @@ The **OPCODE** field defines the operation performed by the ALU on operands **RA
 | `10` | **JSMALLERA** | Jump if $RA < RB$ |
 | `11` | **JC** | Jump if Carry Flag is Set |
 
+*NOTE: 1. Every flag depends upon the RA and RB flags updates combinationaly
+2. No Register is Combnational*
 ---
 
 ## 5. Implementation Summary
@@ -102,3 +103,5 @@ The **OPCODE** field defines the operation performed by the ALU on operands **RA
 * **Memory:** Dedicated Load/Store types provide clean 12-bit addressing without needing pointers.
 * **Siddhuceros-II Goal:** Optimized for fast iterative addition and conditional branching.
 
+
+U have to preload the constants in memory and use these above operation to make the in use 
