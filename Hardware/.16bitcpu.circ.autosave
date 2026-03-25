@@ -108,29 +108,6 @@
     <comp lib="0" loc="(1390,1630)" name="Constant"/>
     <comp lib="0" loc="(1400,1790)" name="Constant"/>
     <comp lib="0" loc="(1410,1930)" name="Constant"/>
-    <comp lib="0" loc="(1440,3240)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="label" val="output_enable_enable"/>
-    </comp>
-    <comp lib="0" loc="(1440,3270)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="label" val="write_enable_enable"/>
-    </comp>
-    <comp lib="0" loc="(1550,3370)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="label" val="outputRegRamALU"/>
-      <a name="width" val="3"/>
-    </comp>
-    <comp lib="0" loc="(1550,3400)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="label" val="write_enable_reg"/>
-      <a name="width" val="3"/>
-    </comp>
-    <comp lib="0" loc="(1560,3430)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="label" val="opcode"/>
-      <a name="width" val="4"/>
-    </comp>
     <comp lib="0" loc="(1620,2280)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
@@ -348,7 +325,6 @@
     <comp lib="1" loc="(3410,2180)" name="NOT Gate"/>
     <comp lib="1" loc="(490,1270)" name="AND Gate"/>
     <comp lib="1" loc="(560,1310)" name="NOT Gate"/>
-    <comp lib="2" loc="(1130,3410)" name="BitSelector"/>
     <comp lib="2" loc="(1370,3500)" name="Demultiplexer">
       <a name="facing" val="north"/>
       <a name="select" val="2"/>
@@ -460,43 +436,43 @@ c000 d001 2040 24d0 220 2560 2090 2110
     <comp lib="8" loc="(2115,3410)" name="Text">
       <a name="text" val="TYPE"/>
     </comp>
-    <comp lib="8" loc="(2584,2909)" name="Text">
+    <comp lib="8" loc="(2580,2905)" name="Text">
       <a name="text" val="LOGIC AND MATHS"/>
     </comp>
-    <comp lib="8" loc="(2619,3576)" name="Text">
+    <comp lib="8" loc="(2615,3575)" name="Text">
       <a name="text" val="MEMORY JUMP"/>
     </comp>
     <comp lib="8" loc="(2700,2830)" name="Text">
       <a name="text" val="src"/>
     </comp>
-    <comp lib="8" loc="(2746,2905)" name="Text">
+    <comp lib="8" loc="(2745,2905)" name="Text">
       <a name="text" val="opcode"/>
     </comp>
-    <comp lib="8" loc="(2763,3470)" name="Text">
+    <comp lib="8" loc="(2760,3470)" name="Text">
       <a name="text" val="MEMORY ADDRESS"/>
     </comp>
     <comp lib="8" loc="(2785,3560)" name="Text">
       <a name="text" val="JUMP FLAGS"/>
     </comp>
-    <comp lib="8" loc="(2913,3259)" name="Text">
+    <comp lib="8" loc="(2910,3255)" name="Text">
       <a name="text" val="STR"/>
     </comp>
-    <comp lib="8" loc="(2919,3089)" name="Text">
+    <comp lib="8" loc="(2915,3085)" name="Text">
       <a name="text" val="LDM"/>
     </comp>
     <comp lib="8" loc="(3130,3165)" name="Text">
       <a name="text" val="MEMORY ADDRESS"/>
     </comp>
-    <comp lib="8" loc="(3141,3010)" name="Text">
+    <comp lib="8" loc="(3140,3010)" name="Text">
       <a name="text" val="MEMORY ADDRESS"/>
     </comp>
     <comp lib="8" loc="(3175,3255)" name="Text">
       <a name="text" val="REG_0-3"/>
     </comp>
-    <comp lib="8" loc="(3210,2612)" name="Text">
+    <comp lib="8" loc="(3210,2610)" name="Text">
       <a name="text" val="FLAGS"/>
     </comp>
-    <comp lib="8" loc="(3210,3064)" name="Text">
+    <comp lib="8" loc="(3210,3060)" name="Text">
       <a name="text" val="REG_0-3"/>
     </comp>
     <comp lib="8" loc="(3395,985)" name="Text">
@@ -624,7 +600,7 @@ c000 d001 2040 24d0 220 2560 2090 2110
     <wire from="(1780,1100)" to="(1780,1140)"/>
     <wire from="(1780,1100)" to="(1890,1100)"/>
     <wire from="(1780,1140)" to="(1780,1160)"/>
-    <wire from="(1780,1140)" to="(3150,1140)"/>
+    <wire from="(1780,1140)" to="(3160,1140)"/>
     <wire from="(1780,1160)" to="(1780,1180)"/>
     <wire from="(1780,1180)" to="(1780,1270)"/>
     <wire from="(1780,1270)" to="(1780,1320)"/>
@@ -1098,13 +1074,12 @@ c000 d001 2040 24d0 220 2560 2090 2110
     <wire from="(3140,2060)" to="(3200,2060)"/>
     <wire from="(3140,2130)" to="(3180,2130)"/>
     <wire from="(3140,2210)" to="(3180,2210)"/>
-    <wire from="(3150,1130)" to="(3150,1140)"/>
-    <wire from="(3150,1130)" to="(3160,1130)"/>
     <wire from="(3150,1950)" to="(3150,2030)"/>
     <wire from="(3150,2030)" to="(3430,2030)"/>
     <wire from="(3150,2300)" to="(3160,2300)"/>
     <wire from="(3150,3040)" to="(3160,3040)"/>
     <wire from="(3160,1110)" to="(3170,1110)"/>
+    <wire from="(3160,1130)" to="(3160,1140)"/>
     <wire from="(3160,2260)" to="(3160,2300)"/>
     <wire from="(3160,2260)" to="(3210,2260)"/>
     <wire from="(3160,3040)" to="(3160,3080)"/>
