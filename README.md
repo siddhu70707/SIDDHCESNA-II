@@ -1,7 +1,7 @@
 
 # SIDDHCESNA - II Architecture Specification
 **Version:** 3.0 (Unified Bus Edition)  
-**Type:** 16-bit Multi-cycle ISA  
+**Type:** 16-bit Single-cycle ISA  
 **Status:** 100% Hardware Complete
 
 ---
@@ -60,6 +60,8 @@ The **OPCODE** field defines the operation performed by the ALU on operands **RA
 | `100` | **RA** | ALU Operand Feeder A |
 | `101` | **RB** | ALU Operand Feeder B |
 | `110` | **CPU_OUT** | External Output (Display) |
+
+*NOTE: CPU_OUT must be ENABLED if doing ALU operations*
 
 ---
 
