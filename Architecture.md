@@ -1,6 +1,6 @@
 # 📑 SIDDHCESNA-II: Architecture & Design Specification
 **Project:** Siddhcesna-II  
-**Architect:** [Your Name]  
+**Architect:** Siddhant Kushwaha  
 **Class:** 16-bit Custom RISC / Harvard Architecture  
 **Transistor Budget:** ~8,000 - 12,000  
 
