@@ -105,5 +105,7 @@ The **OPCODE** field defines the operation performed by the ALU on operands **RA
 * **Memory:** Dedicated Load/Store types provide clean 12-bit addressing without needing pointers.
 * **Siddhuceros-II Goal:** Optimized for fast iterative addition and conditional branching.
 
+U must use alu out for any alu operation including pass a and pass b
+Flags are ombinational depends on the alu feeeders
 
 U have to preload the constants in memory and use these above operation to make the in use 
