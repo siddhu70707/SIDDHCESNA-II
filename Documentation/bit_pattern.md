@@ -1,53 +1,77 @@
-                                        SIDDHCESNA - II
+# SIDDHCESNA - II
 
-[type - 2 bits][OPCODE 4 bits][source/reg/alu/memory - 3 bits ][destination - 3 bits][unused - 4 bits ]
+**SIDDHCESNA - II** is a custom 16-bit RISC-style architecture designed for efficiency and iterative calculation. It features a unique **Unified Bus** design where arithmetic results and register moves are handled through a single 16-bit data path, optimized for fast conditional branching and modular expansion. 🛠️
 
-Type is universal if 00 then the bt pattern at top will be followd of 10 then
+---
 
-[type - 2 bits][FLAG - 2 bits][memory address - 12 bits]
+## 🏗️ Architecture Specifications
 
-the bit at 1 place in the memory operation defines load or store if 10 load then the value from ram will load in register if 11 then store in memory and it will not be used thats a problem i faced out so it wil empty
 
-source - 3 bits
-R0 - 000
-R1 - 001
-R2 - 010
-R3 - 011
-ALU - 100
-MEMORy - 101
+| Component | Specification |
+| :--- | :--- |
+| **Word Size** | 16-bit |
+| **Address Space** | 12-bit (4,096 Words) |
+| **Register File** | 4 General Purpose (R0-R3) |
+| **ALU Feeders** | 2 Dedicated Operands (RA, RB) |
+| **Data Memory** | RAM (12-bit Addr / 16-bit Data) |
+| **Program Memory** | ROM (12-bit Addr / 16-bit Inst) |
+| **Output** | Integrated 7-Segment Display |
 
-destination - 3 bits
+---
 
-R0 - 000
-R1 - 001
-R2 - 010
-R3 - 011
-RA - 100 alu feeder feeds operand A
-RB - 101 alu feeder feeds operand B
-RAM - 110
+## 🚀 Key Features
 
-OP CODES - 4 bits
+*   **Unified Bus Move:** Logic and Math operations are executed during data moves, reducing the instruction count for complex algorithms.
+*   **Dedicated ALU Feeders:** High-speed RA and RB registers act as direct inputs to the ALU, enabling combinational flag updates for Jumps.
+*   **Hardware-Verified Logic:** Successfully executes iterative algorithms like the Fibonacci sequence using a robust comparison-based loop.
 
-ADD - 0000
-SUB = 0001
-MUL - 0010
-DIV - 0011
-NOT - 0100 inverts a
-AND - 0101
-OR  - 0110
-XOR - 0111
-STORE - 1000 - i have a question this stores the value in ram suppose i store alu's value in ram now i want to acces it how can i i dont have the memory addr or this is the assembler's job
-HALT - 1001
+---
 
-FLAGS - 2 bits
+## 📑 Instruction Set Architecture (ISA)
 
-Z - 00
-c - 01
-G - 10
-S - 11
+The ISA uses a 2-bit prefix to determine the instruction type:
 
-NOTE -
-THE CPU DOES NOT SUPPORT NEGATIVE
-JUMPS CAN ONLY HAPPEN IN 0 to 2^12 or 4096 MEMORY ADDRESS
-SIZE OF WORD IS 16 BIT
 
+| Type | Prefix | Mnemonic | Description |
+| :--- | :--- | :--- | :--- |
+| **00** | `00` | **MOV** | ALU Operations & Bus Transfers |
+| **01** | `01` | **STR** | Store Register value to RAM |
+| **10** | `10` | **JUMP** | Conditional Branching (JZ, JGREATER, etc.) |
+| **11** | `11` | **LDM** | Load value from RAM to Register |
+
+> [!IMPORTANT]
+> **Hardware Note:** To drive the 16-bit Unified Bus during any ALU operation (ADD, SUB, PASSA, etc.), the **Source ID** must be set to `100` (ALU_OUT).
+
+---
+
+## 📉 Hardware Verification: Fibonacci Test
+
+The architecture has been verified using a Fibonacci sequence generator.
+
+**Logic Flow:**
+1.  **Initialize:** $RA = 0, RB = 1$.
+2.  **Perform:** $RA + RB$ and output to `CPU_OUT`.
+3.  **Store:** Result in `R0` (Temp).
+4.  **Shift values:** $RA = RB, RB = R0$.
+5.  **Compare:** Against a pre-loaded limit in `R1`.
+6.  **JGREATERA:** Back to start if the limit is not reached.
+
+**Result:** Successfully calculated and displayed `1, 2, 3, 5, 8, D` (Hex).
+
+---
+
+## 📂 Project Structure
+
+*   `/Architecture_documentation`: Bit-pattern maps and component IDs.
+*   `/HARDWARE`: `.circ` files for the CPU core and sub-circuits.
+*   `/Documentation/Programs`: Hex code and assembly notes for verified programs.
+
+---
+
+## 💻 How to Run
+
+1.  Download and install **Logisim-evolution**.
+2.  Open `16bitcpu.circ`.
+3.  Load the desired `.hex` file into the **ROM** component.
+4.  Initialize required constants in **RAM** (e.g., addresses `0x000`–`0x002`).
+5.  Enable **Ticks** and set frequency to **4Hz - 16Hz** to observe the 7-segment output.
