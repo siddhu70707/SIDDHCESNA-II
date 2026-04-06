@@ -70,7 +70,8 @@ unordered_map<string, int> flags = {
     {"JZ", 0},
     {"JGREATER", 1},
     {"JSMALLER", 2},
-    {"JC", 3}
+    {"JC", 3},
+    {"JZERO", 0}
 };
 
 int parseHex(string hex_str) {
@@ -83,7 +84,7 @@ int parseHex(string hex_str) {
 void initial_command(){
     cout << CYAN << "=============================================================" << RESET << endl;
     cout << CYAN << "|                                                           |" << RESET << endl;
-    cout << CYAN << "|             " << BOLD << "SCESNA 16-bit Assembler v1.0" << RESET << CYAN << "                  |" << RESET << endl;
+    cout << CYAN << "|             " << BOLD << "SCESNA 16-bit Assembler v1.4" << RESET << CYAN << "                  |" << RESET << endl;
     cout << CYAN << "|            Command-Line Interface (C++17)                 |" << RESET << endl;
     cout << CYAN << "|                                                           |" << RESET << endl;
     cout << CYAN << "=============================================================" << RESET << endl;
@@ -99,10 +100,10 @@ void initial_command(){
 
 
 
-void type_00(string opcode, string arg1, string arg2){
+void type_00(string opcode, string src_str, string dest_str){
     int opc = opcodes[opcode];
-    int s = src[arg1];
-    int d = dest[arg2];
+    int s = src[src_str];
+    int d = dest[dest_str];
     
     int instruction = (0 << 14) | (opc << 10) | (s << 7) | (d << 4);
     
@@ -121,9 +122,8 @@ void type_01(string reg, int addr){
     program_counter++;
 }
 
-void type_10(string flag, string label){
+void type_10(string flag, int addr){
     int flg = flags[flag];
-    int addr = tag_id[label];
     
     int instruction = (2 << 14) | (flg << 12) | addr;
     
@@ -134,13 +134,18 @@ void type_10(string flag, string label){
 
 void type_11(string reg, int addr){
     int reg_id = dest[reg];
-    
-    int instruction = (3 << 14) | (reg_id << 12) | addr;
-    
+    if (reg_id > 3) {
+        cerr << RED << "> Error: Only R0-R3 can be used with LOAD/STORE." << RESET << endl;
+        return;
+    }
+
+    int instruction = (3 << 14) | ((reg_id & 0x3) << 12) | (addr & 0xFFF);
     string binary = bitset<16>(instruction).to_string();
     bincode.push_back(binary);
     program_counter++;
 }
+
+
 
 void binToHex(){
     hexcode.clear();
@@ -158,89 +163,94 @@ void define_type(string line){
     ss >> first_word;
 
     if (first_word == "#define") {
-        string name;
-        int val;
-        ss >> name >> val;
-        ConstantsInProgram[name] = val;
-        memory_counter++;
+        string name, val_str;
+        ss >> name >> val_str;
+        if (!name.empty() && name.back() == ',') name.pop_back();
+        ConstantsInProgram[name] = parseHex(val_str);
     }
     else if (first_word[0] == '@') {
-        string id_name = first_word.substr(1);
-        tag_id[id_name] = program_counter;
+        return; // Labels handled in pre-scan
     }
-    else if (first_word[0] == '/' && first_word[1] == '/') {
+    else if (first_word.substr(0,2) == "//") {
         return;
     }
     else {
         string opcode = first_word;
-        string arg1, arg2, arg3;
-        ss >> arg1 >> arg2 >> arg3;
+        if (!opcode.empty() && opcode.back() == ',') opcode.pop_back();
+        string arg1, arg2;
+        ss >> arg1 >> arg2;
 
-        if (arg1.back() == ',') arg1.pop_back();
-        if (arg2.back() == ',') arg2.pop_back();
+        if (!arg1.empty() && arg1.back() == ',') arg1.pop_back();
+        if (!arg2.empty() && arg2.back() == ',') arg2.pop_back();
 
         if (opcode == "HALT") {
             int opc = opcodes[opcode];
             int instruction = (0 << 14) | (opc << 10);
-            string binary = bitset<16>(instruction).to_string();
-            bincode.push_back(binary);
+            bincode.push_back(bitset<16>(instruction).to_string());
             program_counter++;
         }
         else if (opcode == "LOAD") {
-            int addr = parseHex(arg2);
+            int addr = ConstantsInProgram.count(arg2) ? ConstantsInProgram[arg2] : parseHex(arg2);
             type_11(arg1, addr);
         }
         else if (opcode == "STORE") {
-            int addr = parseHex(arg2);
+            int addr = ConstantsInProgram.count(arg2) ? ConstantsInProgram[arg2] : parseHex(arg2);
             type_01(arg1, addr);
         }
         else if (flags.count(opcode)) {
-            string label = arg1;
-            if (label[0] == '@') label = label.substr(1);
-            if (tag_id.count(label)) {
-                type_10(opcode, label);
-            }
+            string label = (arg1 == "," || arg1.empty()) ? arg2 : arg1;
+            if (!label.empty() && label[0] == '@') label = label.substr(1);
+            int addr = tag_id.count(label) ? tag_id[label] : parseHex(label);
+            type_10(opcode, addr);
         }
-        else if (opcodes.count(opcode) && src.count(arg1)) {
-            type_00(opcode, arg1, arg2);
+        else if (opcode == "MOV") {
+            string src_s = arg1, dest_s = arg2;
+            if (dest_s.empty() && src_s.find(',') != string::npos) {
+                size_t pos = src_s.find(',');
+                dest_s = src_s.substr(pos + 1);
+                src_s = src_s.substr(0, pos);
+            }
+            type_00("PASSA", src_s, dest_s); 
+        }
+        else if (opcode == "OUT") {
+            type_00("PASSA", arg1, "CPU_OUT");
+        }
+        else if (opcodes.count(opcode)) {
+            type_00(opcode, "ALU_OUT", arg1);
         }
     }
 }
-void assembler(string filename) {
-    //check if with .scensa
-    if (filename.length() < 7 || filename.substr(filename.length() - 7) != ".scesna") {
-        cerr << RED << "> Error: Invalid file extension. Please use a .scesna file." << RESET << endl;
-        return;
-    }
 
-    ifstream file(filename);
-    if (!file.is_open()) {
-        cerr << RED << "> File could not be opened!" << RESET << endl;
-        return;
-    }
+void assembler(string fname) {
+    ifstream file(fname);
+    if (!file.is_open()) { cerr << RED << "File Error!" << RESET << endl; return; }
 
-    //reset 
     program_counter = 0;
-    memory_counter = 0;
-    ConstantsInProgram.clear();
     tag_id.clear();
+    ConstantsInProgram.clear();
     bincode.clear();
-    hexcode.clear();
 
-    while (getline(file, line)) {
-        if (line.empty() || line.find_first_not_of(" \t\n\v\f\r") == string::npos) {
-            continue;
-        }
-
-        define_type(line);
+    // Pass 1: Pre-scan for labels
+    string temp;
+    while (getline(file, temp)) {
+        if (temp.empty() || temp.substr(0,2) == "//") continue;
+        stringstream ss(temp);
+        string word; ss >> word;
+        if (word[0] == '@') tag_id[word.substr(1)] = program_counter;
+        else if (word != "#define") program_counter++;
     }
-
+    
+    // Pass 2: Actual assembly
+    file.clear(); file.seekg(0);
+    int final_pc = 0;
+    program_counter = 0; 
+    while (getline(file, temp)) {
+        if (temp.empty() || temp.substr(0,2) == "//") continue;
+        define_type(temp);
+    }
     file.close();
-
-    assembled = true;
-    iamsure = false;
-    cout << GREEN << "> Assembly complete!" << RESET << endl;
-    cout << CYAN << "> Lines of code: " << RESET << program_counter << endl;
+    assembled = true; iamsure = false;
+    cout << GREEN << "> Assembly complete! Lines: " << bincode.size() << RESET << endl;
 }
 
 int main() {

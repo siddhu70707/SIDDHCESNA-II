@@ -9,12 +9,12 @@
     LOAD r2, 0x002
 
 @LOOP
-    LOAD rA, r0
-    LOAD rB, r1
+    MOV PASSA, r0, rA
+    MOV PASSB, r1, rB
     ADD r0
     OUT r0
-    LOAD rA, r0
-    LOAD rB, r2
+    MOV PASSA, r0, rA
+    MOV PASSB, r2, rB
     JSMALLER @LOOP
 
 HALT
