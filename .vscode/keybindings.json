@@ -1,0 +1,8 @@
+// Place your workspace keybindings in this file to override the defaults
+[
+    {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Build and Run"
+    }
+]

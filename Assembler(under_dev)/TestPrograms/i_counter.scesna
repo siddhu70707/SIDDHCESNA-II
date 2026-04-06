@@ -12,7 +12,7 @@
     LOAD rA, r0
     LOAD rB, r1
     ADD r0
-    OUT(r0)
+    OUT r0
     LOAD rA, r0
     LOAD rB, r2
     JSMALLER @LOOP

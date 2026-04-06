@@ -1,0 +1,6 @@
+{
+    "code-runner.executorMap": {
+        "cpp": "cd $dirWithoutTrailingSlash; g++ $fileName -o $fileNameWithoutExt; .\\$fileNameWithoutExt"
+    },
+    "code-runner.runInTerminal": true
+}
