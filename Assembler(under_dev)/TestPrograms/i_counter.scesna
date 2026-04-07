@@ -1,5 +1,5 @@
 
-#define 0, 0x000
+#define zero, 0x000
 #define 1, 0x001
 #define 1000, 0x002
 
