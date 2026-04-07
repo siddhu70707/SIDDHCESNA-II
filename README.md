@@ -11,7 +11,7 @@
 - 📜 Language Documentation [Language documentation](https://github.com/siddhu70707/SIDDHCESNA-II/blob/main/LanguageDocumentation.md)
 - 🏗️ Architecture Specification [Architecture](https://github.com/siddhu70707/SIDDHCESNA-II/blob/main/Architecture.md)
 - 🔨 hardware [16-bit-CPU](https://github.com/siddhu70707/SIDDHCESNA-II/blob/main/Hardware/16bitcpu.circ)
-- 👩‍💻 Code [assembler](https://github.com/siddhu70707/SIDDHCESNA-II/blob/main/Scesna(assembler)/main.cpp)
+- 👩‍💻 Code [Assembler](https://github.com/siddhu70707/SIDDHCESNA-II/blob/main/Scesna(assembler)/main.cpp)
 ---
 
 ## 1. System Overview
