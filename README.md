@@ -61,7 +61,7 @@ The **OPCODE** field defines the operation performed by the ALU on operands **RA
 | `101` | **RB** | ALU Operand Feeder B |
 | `110` | **CPU_OUT** | External Output (Display) |
 
-*NOTE: CPU_OUT must be ENABLED if doing ALU operations*
+*NOTE: ALU_OUT must be ENABLED if doing ALU operations*
 
 ---
 
