@@ -1,65 +1,74 @@
-## 📖 SCESNA-II Language Documentation
+# 📖 SCESNA-II Language Documentation (v3.2)
 
-This section defines the syntax and programming model for the **SIddhcesna-II** Assembler.
-
-### 1. Syntax Rules
-* **Case Sensitivity:** Mnemonics (e.g., `MOV`, `ADD`) are case-insensitive. Register names (e.g., `R0`, `r0`) are also case-insensitive.
-* **Comments:** Use `//` for single-line comments.
-    * Example: `MOV R0, RA // This is a comment`
-* **Labels:** Defined using the `@` prefix. Labels store the address of the instruction immediately following them.
-    * Example: `@START`
-* **Directives:** Use `#define` to map a name to a 12-bit RAM address or constant value.
-    * Example: `#define TEMP 0x01F`
+This document defines the syntax and hardware-interaction model for the **SIDDHCESNA-II processor**.
 
 ---
 
-### 2. Instruction Set Reference
+## 1. Instruction Set Architecture (ISA)
 
-#### **Data Movement**
-| Instruction | Syntax | Description |
-| :--- | :--- | :--- |
-| **MOV** | `MOV <src>, <dest>` | Moves data from Source to Destination via the Unified Bus. Defaults to `PASSA` opcode. |
-| **LOAD** | `LOAD <reg>, <addr>` | Loads a 16-bit value from RAM address `<addr>` into `<reg>` (R0-R3). |
-| **STORE** | `STORE <reg>, <addr>` | Stores a 16-bit value from `<reg>` into RAM address `<addr>`. |
-| **OUT** | `OUT <reg>` | Shorthand for `MOV PASSA, <reg>, CPU_OUT`. Sends value to the 7-segment display. |
+### 🧩 Data Movement
 
-#### **Arithmetic & Logic**
-*Note: All Math/Logic operations use values currently in **RA** and **RB** and must store the result from **ALU_OUT**.*
-
-| Instruction | Syntax | Hardware Action |
-| :--- | :--- | :--- |
-| **ADD** | `ADD <dest>` | `dest = RA + RB` |
-| **SUB** | `SUB <dest>` | `dest = RA - RB` |
-| **MUL** | `MUL <dest>` | `dest = RA * RB` |
-| **DIV** | `DIV <dest>` | `dest = RA / RB` |
-| **NOT** | `NOT <dest>` | `dest = ~RA` |
-| **HALT** | `HALT` | Stops the CPU clock and terminates program execution. |
-
-#### **Control Flow (Jumps)**
-Jumps are **absolute** to a 12-bit ROM address.
-| Instruction | Syntax | Condition |
-| :--- | :--- | :--- |
-| **JZ / JZERO** | `JZ @label` | Jump if `RA == RB` |
-| **JGREATER** | `JGREATER @label` | Jump if `RA > RB` |
-| **JSMALLER** | `JSMALLER @label` | Jump if `RA < RB` |
-| **JC** | `JC @label` | Jump if the Carry flag is set |
+| Instruction | Syntax              | Opcode     | Description |
+|------------|--------------------|------------|-------------|
+| MOV        | `MOV <src> <dest>` | 1000 / 1001 | Moves data via Unified Bus. Uses PASSA or PASSB based on source. |
+| LOAD       | `LOAD <reg> <addr>`| 11         | Loads 16-bit value from RAM address into R0–R3. |
+| STORE      | `STORE <reg> <addr>`| 11        | Stores 16-bit value from R0–R3 into RAM address. |
+| OUT        | `OUT <src>`        | 1000       | Sends `<src>` data to the display port. |
 
 ---
 
-### 3. Programming Logic (The "Feeder" Pattern)
-Because the ALU is strictly combinational based on **RA** and **RB**, you must follow this pattern for any calculation or comparison:
+### ⚙️ Arithmetic & Control
 
-1.  **Setup:** Load your first operand into `RA`.
-2.  **Setup:** Load your second operand into `RB`.
-3.  **Execute:** Call the ALU instruction (e.g., `ADD R0`) or a Jump.
+> **Note:** Operations are performed on the values currently latched in **RA** and **RB**.
 
-**Example: Adding two numbers stored in RAM**
-```assembly
+| Instruction | Syntax           | Hardware Action |
+|------------|------------------|-----------------|
+| ADD        | `ADD <dest>`     | `dest = RA + RB` (Result from ALU_OUT) |
+| SUB        | `SUB <dest>`     | `dest = RA - RB` (Result from ALU_OUT) |
+| JSMALLER   | `JSMALLER @label`| Jump to ROM address if `RA < RB` |
+| HALT       | `HALT`           | Opcode `1111`. Stops the CPU clock. |
+
+---
+
+## 2. 🔁 The "Feeder" Programming Pattern
+
+The **SIDDHCESNA-II** uses a strict **setup-before-execution** flow.
+
+Because the ALU is fed by dedicated registers (**RA** and **RB**), you must *feed* them before performing math or comparisons.
+
+### Pattern:
+
+1. **Feed RA**  
+   Move the first operand into `RA`.
+
+2. **Feed RB**  
+   Move the second operand into `RB`.
+
+3. **Execute**  
+   Run the ALU or jump instruction.
+
+---
+
+## 3. 🧠 Logic Example: Adding Two Numbers
+
+Add two numbers stored in RAM addresses `0x001` and `0x002`.
+
+### Code Snippet
+
+```asm
 #define VAR1 0x001
 #define VAR2 0x002
 
-LOAD R0, VAR1
-MOV R0, RA    // Prepare RA
-LOAD R1, VAR2
-MOV R1, RB    // Prepare RB
-ADD R2        // R2 now contains VAR1 + VAR2
+// 1. Load data from RAM to GP Registers
+LOAD R0 VAR1
+LOAD R1 VAR2
+
+// 2. Feed the ALU
+MOV R0 RA    // Feed RA (F(n-2) path)
+MOV R1 RB    // Feed RB (F(n-1) path - triggers PASSB)
+
+// 3. Execute and store
+ADD R3       // R3 = RA + RB (Hex: 0230)
+OUT R3       // Send result to display
+
+HALT
