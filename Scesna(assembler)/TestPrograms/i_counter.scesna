@@ -1,12 +1,13 @@
+// Scesna syntax
 
 #define zero, 0x000
-#define 1, 0x001
-#define 1000, 0x002
+#define one, 0x001
+#define limit, 0x002
 
 @INITIALISE
-    LOAD r0, 0x000
-    LOAD r1, 0x001
-    LOAD r2, 0x002
+    LOAD r0, zero
+    LOAD r1, one
+    LOAD r2, limit
 
 @LOOP
     MOV PASSA, r0, rA
@@ -18,3 +19,10 @@
     JSMALLER @LOOP
 
 HALT
+
+
+
+
+
+
+

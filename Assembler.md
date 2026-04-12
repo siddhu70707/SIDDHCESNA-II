@@ -56,7 +56,7 @@ clone the repo [SIDDHCESNA-II](https://github.com/siddhu70707/SIDDHCESNA-II)
 
 ### 2. Code
 
-write your code in .scesna [syntax]()
+write your code in .scesna [syntax](https://github.com/siddhu70707/SIDDHCESNA-II/blob/main/LanguageDocumentation.md) next to the main.cpp file
 
 ### 3. Compilation
 Compile the assembler using any C++17 compatible compiler:

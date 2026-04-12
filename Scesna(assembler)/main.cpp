@@ -74,17 +74,25 @@ unordered_map<string, int> flags = {
     {"JZERO", 0}
 };
 
-int parseHex(string hex_str) {
-    if (hex_str.substr(0, 2) == "0x" || hex_str.substr(0, 2) == "0X") {
-        return stoi(hex_str, nullptr, 16);
+int parseHex(string str) {
+    if (str.empty()) return 0; 
+    try {
+        if (str.size() > 2 && (str.substr(0, 2) == "0x" || str.substr(0, 2) == "0X")) {
+            return stoi(str, nullptr, 16);
+        }
+        if (isdigit(str[0]) || (str.size() > 1 && str[0] == '-')) {
+            return stoi(str);
+        }
+    } catch (...) {
+        return 0; 
     }
-    return stoi(hex_str);
+    return 0;
 }
 
 void initial_command(){
     cout << CYAN << "=============================================================" << RESET << endl;
     cout << CYAN << "|                                                           |" << RESET << endl;
-    cout << CYAN << "|             " << BOLD << "SCESNA 16-bit Assembler v1.4" << RESET << CYAN << "                  |" << RESET << endl;
+    cout << CYAN << "|             " << BOLD << "SCESNA 16-bit Assembler v1.6" << RESET << CYAN << "                  |" << RESET << endl;
     cout << CYAN << "|            Command-Line Interface (C++17)                 |" << RESET << endl;
     cout << CYAN << "|                                                           |" << RESET << endl;
     cout << CYAN << "=============================================================" << RESET << endl;
@@ -101,17 +109,16 @@ void initial_command(){
 
 
 void type_00(string opcode, string src_str, string dest_str){
+    if (opcodes.find(opcode) == opcodes.end()) return;
+    
     int opc = opcodes[opcode];
     int s = src[src_str];
     int d = dest[dest_str];
+    int instruction = (0 << 14) | ((opc & 0xF) << 10) | ((s & 0x7) << 7) | ((d & 0x7) << 4);
     
-    int instruction = (0 << 14) | (opc << 10) | (s << 7) | (d << 4);
-    
-    string binary = bitset<16>(instruction).to_string();
-    bincode.push_back(binary);
+    bincode.push_back(bitset<16>(instruction).to_string());
     program_counter++;
 }
-
 void type_01(string reg, int addr){
     int reg_id = dest[reg];
     
@@ -157,67 +164,75 @@ void binToHex(){
     }
 }
 
+#include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <sstream>
+#include <fstream>
+#include <bitset>
+#include <iomanip>
+#include <algorithm>
+
+using namespace std;
+
+// ... [Keep your existing Global Variables and Maps] ...
+
+// Helper to clean line of commas and comments
+string cleanLine(string line) {
+    size_t commentPos = line.find("//");
+    if (commentPos != string::npos) line = line.substr(0, commentPos);
+    replace(line.begin(), line.end(), ',', ' ');
+    return line;
+}
+
 void define_type(string line){
+    line = cleanLine(line);
     stringstream ss(line);
-    string first_word;
-    ss >> first_word;
+    string cmd;
+    ss >> cmd;
 
-    if (first_word == "#define") {
-        string name, val_str;
-        ss >> name >> val_str;
-        if (!name.empty() && name.back() == ',') name.pop_back();
-        ConstantsInProgram[name] = parseHex(val_str);
-    }
-    else if (first_word[0] == '@') {
-        return; // Labels handled in pre-scan
-    }
-    else if (first_word.substr(0,2) == "//") {
-        return;
-    }
-    else {
-        string opcode = first_word;
-        if (!opcode.empty() && opcode.back() == ',') opcode.pop_back();
-        string arg1, arg2;
-        ss >> arg1 >> arg2;
+    if (cmd.empty() || cmd == "#define" || cmd[0] == '@') return;
 
-        if (!arg1.empty() && arg1.back() == ',') arg1.pop_back();
-        if (!arg2.empty() && arg2.back() == ',') arg2.pop_back();
+        else if (cmd == "MOV") {
+            string s_arg, d_arg;
+            ss >> s_arg >> d_arg;
 
-        if (opcode == "HALT") {
-            int opc = opcodes[opcode];
-            int instruction = (0 << 14) | (opc << 10);
-            bincode.push_back(bitset<16>(instruction).to_string());
-            program_counter++;
-        }
-        else if (opcode == "LOAD") {
-            int addr = ConstantsInProgram.count(arg2) ? ConstantsInProgram[arg2] : parseHex(arg2);
-            type_11(arg1, addr);
-        }
-        else if (opcode == "STORE") {
-            int addr = ConstantsInProgram.count(arg2) ? ConstantsInProgram[arg2] : parseHex(arg2);
-            type_01(arg1, addr);
-        }
-        else if (flags.count(opcode)) {
-            string label = (arg1 == "," || arg1.empty()) ? arg2 : arg1;
-            if (!label.empty() && label[0] == '@') label = label.substr(1);
-            int addr = tag_id.count(label) ? tag_id[label] : parseHex(label);
-            type_10(opcode, addr);
-        }
-        else if (opcode == "MOV") {
-            string src_s = arg1, dest_s = arg2;
-            if (dest_s.empty() && src_s.find(',') != string::npos) {
-                size_t pos = src_s.find(',');
-                dest_s = src_s.substr(pos + 1);
-                src_s = src_s.substr(0, pos);
+            if (s_arg == "R1" || s_arg == "r1" || d_arg == "RB" || d_arg == "rB") {
+                type_00("PASSB", s_arg, d_arg); 
+            } else {
+                type_00("PASSA", s_arg, d_arg); 
             }
-            type_00("PASSA", src_s, dest_s); 
         }
-        else if (opcode == "OUT") {
-            type_00("PASSA", arg1, "CPU_OUT");
+            else if (cmd == "OUT") {
+        string reg; ss >> reg;
+        type_00("PASSA", reg, "CPU_OUT");
+    }
+    else if (opcodes.count(cmd)) {
+        if (cmd == "HALT") {
+            int inst = (0 << 14) | (opcodes["HALT"] << 10);
+            bincode.push_back(bitset<16>(inst).to_string());
+            program_counter++;
+        } else {
+            string target; ss >> target;
+            type_00(cmd, "ALU_OUT", target);
         }
-        else if (opcodes.count(opcode)) {
-            type_00(opcode, "ALU_OUT", arg1);
-        }
+    }
+    else if (cmd == "LOAD") {
+        string r, addr_s; ss >> r >> addr_s;
+        int addr = ConstantsInProgram.count(addr_s) ? ConstantsInProgram[addr_s] : parseHex(addr_s);
+        type_11(r, addr);
+    }
+    else if (cmd == "STORE") {
+        string r, addr_s; ss >> r >> addr_s;
+        int addr = ConstantsInProgram.count(addr_s) ? ConstantsInProgram[addr_s] : parseHex(addr_s);
+        type_01(r, addr);
+    }
+    else if (flags.count(cmd)) {
+        string label; ss >> label;
+        if (!label.empty() && label[0] == '@') label = label.substr(1);
+        int addr = tag_id.count(label) ? tag_id[label] : parseHex(label);
+        type_10(cmd, addr);
     }
 }
 
@@ -230,28 +245,39 @@ void assembler(string fname) {
     ConstantsInProgram.clear();
     bincode.clear();
 
-    // Pass 1: Pre-scan for labels
     string temp;
+    // Pass 1: Capture Labels AND Constants
     while (getline(file, temp)) {
-        if (temp.empty() || temp.substr(0,2) == "//") continue;
+        temp = cleanLine(temp);
         stringstream ss(temp);
         string word; ss >> word;
-        if (word[0] == '@') tag_id[word.substr(1)] = program_counter;
-        else if (word != "#define") program_counter++;
+        if (word.empty()) continue;
+
+        if (word == "#define") {
+            string name, val;
+            ss >> name >> val;
+            ConstantsInProgram[name] = parseHex(val);
+        } 
+        else if (word[0] == '@') {
+            tag_id[word.substr(1)] = program_counter;
+        } 
+        else {
+            program_counter++;
+        }
     }
     
-    // Pass 2: Actual assembly
+    // Pass 2: Generate Code
     file.clear(); file.seekg(0);
-    int final_pc = 0;
     program_counter = 0; 
     while (getline(file, temp)) {
-        if (temp.empty() || temp.substr(0,2) == "//") continue;
         define_type(temp);
     }
     file.close();
     assembled = true; iamsure = false;
     cout << GREEN << "> Assembly complete! Lines: " << bincode.size() << RESET << endl;
 }
+
+
 
 int main() {
     initial_command();
