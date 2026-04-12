@@ -1,0 +1,21 @@
+#define zero 0x000
+#define one 0x001
+#define limit 0x002
+
+@INITIALISE
+    LOAD r0, zero    // c000
+    LOAD r1, one     // d001
+    LOAD r2, limit   // e002
+
+@LOOP
+    MOV r0, rA       // 2040
+    MOV r1, rB       // 24d0
+    ADD r3           // 0230
+    OUT r0           // 2260
+    MOV r1, r0       // 2480
+    MOV r3, r1       // 2190
+    MOV r0, rA       // 2040
+    MOV r2, rB       // 2550
+    JSMALLER @LOOP   // a003
+
+HALT                 // 3c00
