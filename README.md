@@ -42,6 +42,7 @@ By mapping ALU results as Sources, math operations are handled via standard move
 | 010 | R2       | Register 2       |
 | 011 | R3       | Register 3       |
 | 100 | ALU_OUT  | ALU result       |
+| 110 | OUTPUT   | Display          |
 
 ---
 
