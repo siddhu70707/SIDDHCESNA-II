@@ -1,4 +1,4 @@
-# 🚀 SIDDHCESNA-II Assembler v1.4
+#  SIDDHCESNA-II Assembler v1.4
 
 **SIDDHCESNA-II** is a custom 16-bit Single-cycle Instruction Set Architecture (ISA). This repository contains the official Assembler written in **C++17**, designed to convert human-readable `.scesna` assembly files into machine-executable Binary and Hexadecimal code.
 
