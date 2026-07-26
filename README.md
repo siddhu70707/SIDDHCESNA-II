@@ -1,4 +1,4 @@
-# 🚀 SIDDHCESNA - II Architecture
+# SIDDHCESNA - II Architecture
 
 **Version:** 3.0 (Unified Bus Edition)  
 **Type:** 16-bit Single-cycle ISA  
