@@ -157,3 +157,32 @@ Loads a 16-bit value from a 12-bit RAM address into a register.
 
 - **Purpose:**  
   Optimized for high-speed iterative addition and complex conditional branching.
+
+## How to Use 
+- **Cloning The Repo:**
+  clone the repo `git clone https://github.com/siddhu70707/SIDDHCESNA-II`
+  
+- **Compile the Assembler:**
+  Navigate to Assembler folder and compile the main.cpp
+  `g++ main.cpp -o main`
+  
+- **Coding A program:**
+  write your code in .scesna [syntax](https://github.com/siddhu70707/SIDDHCESNA-II/blob/main/LanguageDocumentation.md) next to the Assembler/main.cpp file
+  
+- **Assembling the Program**
+  Open the compiled assembler file and run these commands:
+  1. `assemble`
+  2. `src.scesna`
+  3. `view const`
+  4. `view hex`
+     
+- **Loading the constants to Program memory**
+  Naviagate to Hardware/16bitcpu.circ Open it with [Logisim-Evo](https://github.com/logisim-evolution/logisim-evolution)
+  Then load the constants that you defined by using '#define' onto the `program memory` manually by right clicking and pasting the hex sequence on their addresses
+  
+- **Loading Machine Code to the Instruction memory**
+  copy the previously generated hex and paste it into the `instruction memory`
+
+- **Running the cpu**
+  press `ctrl + k` to enable auto-ticking of clock
+
