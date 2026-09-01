@@ -1,0 +1,10 @@
+#define ZERO, 0x000
+
+@RESET
+    LOAD r0, 0x000
+    MOV r0, rA
+    MOV r0, rB
+    JZERO, @START 
+
+@START
+    MOV r0, r0

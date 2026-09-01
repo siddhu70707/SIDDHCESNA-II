@@ -1,0 +1,10 @@
+#define 99, 0xfff
+#define 1, 0xffe
+
+@ADD_FUNCTION
+    LOAD r0, 0xfff
+    LOAD r1, 0xffe
+    LOAD rA, r0
+    LOAD rB, r1
+    ADD r2
+    STORE R2 0xffd
